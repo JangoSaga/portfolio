@@ -46,8 +46,20 @@ if ($parentBranch -match '^precize-(main|stage|dev)$') {
   # Scenario 3: Chained PR
   $labels += @("chained", "dev")
 } else {
-  # Default to dev
-  $labels += "dev"
+  # No upstream branch detected - ask user
+  Write-Host "`nNo upstream branch detected. Is this a chained PR?"
+  Write-Host "1. Chained (based on another prefro branch)"
+  Write-Host "2. Feature branch (based on a feature branch)"
+  Write-Host "3. Regular branch (default to dev)"
+  $branchType = Read-Host "Select branch type (1, 2, or 3)"
+  
+  if ($branchType -eq "1") {
+    $labels += @("chained", "dev")
+  } elseif ($branchType -eq "2") {
+    $labels += @("feature", "dev")
+  } else {
+    $labels += "dev"
+  }
 }
 
 # Ask user about work status
@@ -62,7 +74,7 @@ if ($choice -eq "2") {
   $labels += "review ready"
 }
 
-#  for PR description details
+# j for PR description details
 Write-Host "`nFilling PR Description"
 Write-Host "`nTask (What task does this address?):"
 $task = Read-Host
