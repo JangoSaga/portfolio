@@ -62,12 +62,26 @@ if ($choice -eq "2") {
   $labels += "review ready"
 }
 
-# Use commit message as PR body
-if ($commits -is [array]) {
-  $body = $commits -join "`n"
-} else {
-  $body = $commits
-}
+# Prompt for PR description details
+Write-Host "`nFilling PR Description Template for [$ticket]"
+Write-Host "`nTask (What task does this address?):"
+$task = Read-Host
+
+Write-Host "`nAction (What changes were made?):"
+$action = Read-Host
+
+Write-Host "`nTesting (How was this tested?):"
+$testing = Read-Host
+
+# Build PR body with description
+$body = "## Ticket`n"
+$body += "$ticket : $title`n`n"
+$body += "## Task`n"
+$body += "$task`n`n"
+$body += "## Action`n"
+$body += "$action`n`n"
+$body += "## Testing`n"
+$body += "$testing"
 
 # Create PR
 Write-Host "Creating PR: [$ticket] $title"
