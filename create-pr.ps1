@@ -76,7 +76,6 @@ $testing = Read-Host
 # Build PR body (just the content, no headings)
 $body = "$task`n`n$action`n`n$testing"
 
-# Create PR
 Write-Host "Creating PR: [$ticket] $title"
 $prOutput = gh pr create `
   --base $BASE_BRANCH `
