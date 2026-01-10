@@ -62,7 +62,7 @@ if ($choice -eq "2") {
   $labels += "review ready"
 }
 
-# Prompt for PR description details
+#  for PR description details
 Write-Host "`nFilling PR Description"
 Write-Host "`nTask (What task does this address?):"
 $task = Read-Host
