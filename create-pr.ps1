@@ -51,10 +51,10 @@ if ($parentBranch -match '^precize-(main|stage|dev)$') {
 }
 
 # Ask user about work status
-Write-Host "`n📋 Is your work done or still in progress?"
-Write-Host "1. Done (add 'review ready' label)"
-Write-Host "2. In progress (add 'wip' label)"
-$choice = Read-Host "Enter choice (1 or 2)"
+Write-Host "`nIs your work done or still in progress?"
+Write-Host "1. Done - add 'review ready' label"
+Write-Host "2. In progress - add 'wip' label"
+$choice = Read-Host "Enter choice 1 or 2"
 
 if ($choice -eq "2") {
   $labels += "wip"
@@ -63,28 +63,32 @@ if ($choice -eq "2") {
 }
 
 # Use commit message as PR body
-$body = $commits
+if ($commits -is [array]) {
+  $body = $commits -join "`n"
+} else {
+  $body = $commits
+}
 
 # Create PR
-Write-Host "`n📝 Creating PR: [$ticket] $title"
+Write-Host "Creating PR: [$ticket] $title"
 $prOutput = gh pr create `
   --base $BASE_BRANCH `
   --title "[$ticket] $title" `
-  --body $body 2>&1
+  --body "$body" 2>&1
 
 if ($LASTEXITCODE -eq 0) {
-  Write-Host "✅ PR Created: $prOutput"
+  Write-Host "PR Created: $prOutput"
   
   # Extract PR number from output
   $prNumber = $prOutput | Select-String -Pattern '#\d+' -AllMatches | % { $_.Matches[0].Value }
   
   # Add labels
-  Write-Host "`n🏷️  Adding labels: $($labels -join ', ')"
+  Write-Host "Adding labels: $($labels -join ', ')"
   foreach ($label in $labels) {
     gh pr edit $prNumber --add-label $label
   }
   
-  Write-Host "✅ Labels added successfully!"
+  Write-Host "Labels added successfully!"
 } else {
-  Write-Host "❌ Failed to create PR: $prOutput"
+  Write-Host "Failed to create PR: $prOutput"
 }
