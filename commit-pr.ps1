@@ -40,7 +40,17 @@ $confirm = Read-Host "`nCommit these changes? (y/n)"
 if ($confirm -eq "y" -or $confirm -eq "yes") {
   git commit -m $commitMessage
   Write-Host "`nChanges committed successfully!"
-  Write-Host "Next step: Run './create-pr.ps1' to create the pull request"
+  
+  # Push changes
+  Write-Host "`nPushing changes..."
+  git push
+  
+  if ($LASTEXITCODE -eq 0) {
+    Write-Host "`nChanges pushed successfully!"
+    Write-Host "Next step: Run './create-pr.ps1' to create the pull request"
+  } else {
+    Write-Host "`nFailed to push changes"
+  }
 } else {
   Write-Host "`nCommit cancelled"
   git reset
